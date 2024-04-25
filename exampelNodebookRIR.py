@@ -6,14 +6,14 @@ import IPython
 from IPython.display import Audio
 import pyroomacoustics as pra
 
-corners = np.array([[0,0], [0,3], [5,3], [5,1], [3,1], [3,0]]).T  # [x,y]
+corners = np.array([[0,0], [0,6], [5,6], [0,5]]).T  # [x,y]
 room = pra.Room.from_corners(corners)
 
-fs, signal = wavfile.read("soundRecord/preliminary_recordings/mic 1_001.wav")
+fs, signal = wavfile.read("Coldplay - Viva La Vida (short).wav")
 
 
 # set max_order to a low value for a quick (but less accurate) RIR
-room = pra.Room.from_corners(corners, fs=fs, max_order=3, materials=pra.Material(0.2, 0.15), ray_tracing=True, air_absorption=True)
+room = pra.Room.from_corners(corners, fs=fs, max_order=3, absorption=0.2, ray_tracing=True, air_absorption=True)
 room.extrude(2., materials=pra.Material(0.2, 0.15))
 
 # Set the ray tracing parameters
@@ -36,7 +36,7 @@ fig.set_size_inches(18.5, 10.5)
 room.plot_rir()
 fig = plt.gcf()
 fig.set_size_inches(15, 5)
-#plt.show()
+plt.show()
 
 t60 = pra.experimental.measure_rt60(room.rir[0][0], fs=room.fs, plot=True)
 print(f"The RT60 is {t60 * 1000:.0f} ms")
@@ -44,13 +44,7 @@ print(f"The RT60 is {t60 * 1000:.0f} ms")
 room.simulate()
 print(room.mic_array.signals.shape)
 
-print("Original WAV:")
-
 audio_outputOriginal = Audio(signal, rate=fs)
-
-# Save the audio to a file
-with open("audio_outputOriginal.wav", "wb") as f:
-    f.write(audio_outputOriginal.data)
 
 print("Simulated propagation to first mic:")
 audio_outputEcho = Audio(room.mic_array.signals[0,:], rate=fs)
