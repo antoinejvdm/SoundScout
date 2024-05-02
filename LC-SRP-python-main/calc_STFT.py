@@ -17,7 +17,7 @@ def calc_STFT(x, fs, win, N_STFT, R_STFT, sides):
     if (sides == 'twosided'):
         X = np.zeros(N_STFT, L, M);
 
-    X=np.complex256(X);
+    X=np.complex128(X);
 
     for m in range (1,M+1):
         for l in range (1,L+1): # Frame index

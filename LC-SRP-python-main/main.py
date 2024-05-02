@@ -16,7 +16,8 @@
 
 
 
-
+import numpy as np
+import matplotlib.pyplot as plt
 import time
 ### ACOUSTIC SETUP
 from numpy import linalg as LA
@@ -74,7 +75,7 @@ omega = 2*pi*np.transpose(np.linspace(0,fs/2,N_STFT_half));
 
 # CANDIDATE LOCATIONS
 # polar angles of candidate locations
-ang_pol= np.arange(90, 181, 2).tolist();
+ang_pol= [90] #np.arange(90, 181, 2).tolist();
 # azimuth angles of candidate locations 
 ang_az = np.arange(0,359,2).tolist();
 # compute candidate DOA vectors and TDOAs
@@ -157,46 +158,64 @@ for true_loc_idx in range (1,len(true_loc)+1):
     SRP_conv = calc_SRPconv(psi_STFT, omega, Delta_t_i);
     elapsed = time.time() - t;
     print(elapsed)
+    print('_____________==')
+    data_array = np.array(SRP_conv)
+    print(data_array[1])
+
+    # Define angles from 0 to 180 degrees
+    angles_degrees = np.linspace(0, 360, len(data_array[1]))
+    # Convert angles to radians
+    angles_radians = np.radians(angles_degrees)
+    # Convert lengths to x and y coordinates
+    x = data_array[1] * np.cos(angles_radians)
+    y = data_array[1] * np.sin(angles_radians)
+    # Plot vectors
+    plt.figure(figsize=(8, 6))
+    plt.plot(x, y)
+    # plt.scatter(x, y, color='red', label='End Point')
+    plt.xlabel('X-coordinate')
+    plt.ylabel('Y-coordinate')
+    plt.title('Vectors at Different Angles')
+    plt.grid(True)
+    plt.show()
     print('done')
 
 
-    # SRP approximation based on shannon nyquist sampes
-    print('* compute SRP approximation...')
-    t = time.time();
-    from calc_SRP import calc_SRP
-    SRP_appr = calc_SRP(psi_STFT, omega, T, N_mm, N_aux, Delta_t_i);
-    elapsed = time.time() - t;
-    print(elapsed)
-    print('done')
+    # # SRP approximation based on shannon nyquist sampes
+    # print('* compute SRP approximation...')
+    # t = time.time();
+    # from calc_SRP import calc_SRP
+    # SRP_appr = calc_SRP(psi_STFT, omega, T, N_mm, N_aux, Delta_t_i);
+    # elapsed = time.time() - t;
+    # print(elapsed)
+    # print('done')
 
     ####
 
     approxErr_dB = np.zeros([L, len(N_aux)]);
     locErr = np.zeros([L, len(N_aux) + 1]);
 
-    maxIdx_conv = np.argmax(SRP_conv, 1);
-    maxIdx_conv = maxIdx_conv.reshape(-1,1);
-    estim_DOAvec = DOAvec_i_tmp[0:len(maxIdx_conv),:];
-    for i in range (1,len(maxIdx_conv)+1):
-        estim_DOAvec[i-1] = DOAvec_i_tmp[maxIdx_conv[i-1],:];
-    locErr[:, 0] = np.rad2deg(np.arccos(np.dot(estim_DOAvec , np.transpose(true_DOAvec[true_loc_idx-1,:]))/(np.sqrt(np.sum(np.power(estim_DOAvec,2), axis=1)) * LA.norm(true_DOAvec[true_loc_idx-1,:]))));
+    # maxIdx_conv = np.argmax(SRP_conv, 1);
+    # maxIdx_conv = maxIdx_conv.reshape(-1,1);
+    # estim_DOAvec = DOAvec_i_tmp[0:len(maxIdx_conv),:];
+    # for i in range (1,len(maxIdx_conv)+1):
+    #     estim_DOAvec[i-1] = DOAvec_i_tmp[maxIdx_conv[i-1],:];
+    # locErr[:, 0] = np.rad2deg(np.arccos(np.dot(estim_DOAvec , np.transpose(true_DOAvec[true_loc_idx-1,:]))/(np.sqrt(np.sum(np.power(estim_DOAvec,2), axis=1)) * LA.norm(true_DOAvec[true_loc_idx-1,:]))));
 
 
-    for N_aux_ind in range (1,len(N_aux)+1):
-        approxErr = np.sum(np.power(SRP_conv - SRP_appr[:,:, N_aux_ind-1], 2), axis=1) / np.sum(np.power(SRP_conv, 2), axis=1);
-        approxErr_dB[:, N_aux_ind-1] = 10*np.log10(approxErr);
+    # for N_aux_ind in range (1,len(N_aux)+1):
+    #     approxErr = np.sum(np.power(SRP_conv - SRP_appr[:,:, N_aux_ind-1], 2), axis=1) / np.sum(np.power(SRP_conv, 2), axis=1);
+    #     approxErr_dB[:, N_aux_ind-1] = 10*np.log10(approxErr);
 
-        maxIdx_conv = np.argmax(SRP_appr[:,:, N_aux_ind-1], 1);
-        estim_DOAvec = DOAvec_i_tmp2[0:len(maxIdx_conv),:];
-        for i in range(1, len(maxIdx_conv) + 1):
-            estim_DOAvec[i - 1] = DOAvec_i_tmp2[maxIdx_conv[i - 1], :];
-        locErr[:, N_aux_ind] = np.rad2deg(np.arccos(np.dot(estim_DOAvec , np.transpose(true_DOAvec[true_loc_idx-1,:]))/(np.sqrt(np.sum(np.power(estim_DOAvec,2), axis=1)) * LA.norm(true_DOAvec[true_loc_idx-1,:]))));
+    #     maxIdx_conv = np.argmax(SRP_appr[:,:, N_aux_ind-1], 1);
+    #     estim_DOAvec = DOAvec_i_tmp2[0:len(maxIdx_conv),:];
+    #     for i in range(1, len(maxIdx_conv) + 1):
+    #         estim_DOAvec[i - 1] = DOAvec_i_tmp2[maxIdx_conv[i - 1], :];
+    #     locErr[:, N_aux_ind] = np.rad2deg(np.arccos(np.dot(estim_DOAvec , np.transpose(true_DOAvec[true_loc_idx-1,:]))/(np.sqrt(np.sum(np.power(estim_DOAvec,2), axis=1)) * LA.norm(true_DOAvec[true_loc_idx-1,:]))));
 
 
     res['field1'][true_loc_idx-1,:,:] = approxErr_dB;
     res['field2'][true_loc_idx-1,:,:] = locErr;
-
-
 
 print('DONE.')
 
