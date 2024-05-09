@@ -21,7 +21,6 @@ import matplotlib.pyplot as plt
 import time
 ### ACOUSTIC SETUP
 from numpy import linalg as LA
-
 import numpy as np
 
 
@@ -168,7 +167,7 @@ for true_loc_idx in range (1,len(true_loc)+1):
 
     from PeakPeaking import finde_max
     plt.figure(figsize=(8, 6))
-    for i in range(1,2): #len(SRP_conv)
+    for i in range(1,len(SRP_conv)): #len(SRP_conv)
         angles_degrees = np.linspace(0, 360, len(data_array[i]))
         angles_radians = np.radians(angles_degrees)
         maxes = finde_max(data_array[i],10,angles_radians)
@@ -177,6 +176,7 @@ for true_loc_idx in range (1,len(true_loc)+1):
         y = data_array[i] * np.sin(angles_radians)
         # Plot vectors
         
+        plt.clf()
         plt.plot(x, y)
         #plt.scatter(x, y, color='blue', label='all_points')
         plt.scatter(maxes[0], maxes[1], color='red', label='max1')
@@ -186,7 +186,9 @@ for true_loc_idx in range (1,len(true_loc)+1):
         plt.ylabel('Y-coordinate')
         plt.title('Vectors at Different Angles')
         plt.grid(True)
+        plt.pause(0.5)
     plt.show()
+        
     print('done')
 
 
