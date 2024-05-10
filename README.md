@@ -13,5 +13,5 @@ Our project is based on the work and research of:
         https://github.com/bilgesu13/LC-SRP-python/blob/main/main.py
     
 -      The real-time audio processing:
-        https://github.com/aiXander/Realtime_PyAudio_FFT
+       https://github.com/aiXander/Realtime_PyAudio_FFT
       
