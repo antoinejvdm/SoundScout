@@ -174,10 +174,16 @@ for true_loc_idx in range (1,len(true_loc)+1):
 
         x = data_array[i] * np.cos(angles_radians)
         y = data_array[i] * np.sin(angles_radians)
+
+        # Debug information
+        print(f"Time Frame {i + 1}")
+        print(f"Max Point: ({maxes[0]}, {maxes[1]})")
+        print(f"Second Max Point: ({maxes[2]}, {maxes[3]})")
+
         # Plot vectors
-        
         plt.clf()
-        plt.plot(x, y)
+        #plt.plot(x, y)
+        plt.plot(x, y, label=f'Time Frame {i + 1}')
         #plt.scatter(x, y, color='blue', label='all_points')
         plt.scatter(maxes[0], maxes[1], color='red', label='max1')
         plt.scatter(maxes[2], maxes[3], color='orange', label='max2')
