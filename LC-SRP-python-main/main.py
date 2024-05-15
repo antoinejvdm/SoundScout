@@ -22,8 +22,7 @@ import time
 ### ACOUSTIC SETUP
 from numpy import linalg as LA
 
-import numpy as np
-
+import random
 
 import scipy.io as spio
 
@@ -104,6 +103,16 @@ locErr=np.zeros((len(true_loc), L, len(N_aux)+1))
 
 res = {'field1': approxErr_dB, 'field2': locErr};
 
+## VISUALIZATION OF ANGLE FOR THE BIGGEST PEAK
+from visualization_of_angle import visualization_of_angle
+plt.ion()  # animation mode
+f1 = plt.figure()
+f2 = plt.figure()
+axis_visualization = f1.add_subplot(projection='3d')
+ax2 = f2.add_subplot(111)
+plt.show()
+plt.pause(0.3) #before starting computing the angle there must be longer pause to show plots
+
 
 
 import soundfile as sf
@@ -159,8 +168,10 @@ for true_loc_idx in range (1,len(true_loc)+1):
     elapsed = time.time() - t;
     print(elapsed)
     print('_____________==')
+
     data_array = np.array(SRP_conv)
     print(data_array[1])
+
 
     # Define angles from 0 to 180 degrees
     angles_degrees = np.linspace(0, 360, len(data_array[1]))
@@ -169,15 +180,23 @@ for true_loc_idx in range (1,len(true_loc)+1):
     # Convert lengths to x and y coordinates
     x = data_array[1] * np.cos(angles_radians)
     y = data_array[1] * np.sin(angles_radians)
+
+    max_peak_index = np.argmax(data_array[1])
+
     # Plot vectors
-    plt.figure(figsize=(8, 6))
-    plt.plot(x, y)
-    # plt.scatter(x, y, color='red', label='End Point')
-    plt.xlabel('X-coordinate')
-    plt.ylabel('Y-coordinate')
-    plt.title('Vectors at Different Angles')
-    plt.grid(True)
-    plt.show()
+    ax2.clear()
+    ax2.set_xlabel('X-coordinate')
+    ax2.set_ylabel('Y-coordinate')
+    ax2.set_title(f'Vectors at Different Angles: {angles_degrees[max_peak_index]:.2f} deg')
+    ax2.grid(True)
+    ax2.plot(x, y, marker='+', linestyle='-')
+    ax2.set_aspect('equal')
+    ax2.quiver(0, 0, x[max_peak_index], y[max_peak_index],scale=1, scale_units='xy',color='blue')
+
+    visualization_of_angle(axis_visualization,angles_radians[max_peak_index])
+    plt.draw()  # Update the plot
+    plt.pause(0.3) # this delay must be there for actualization of graph
+
     print('done')
 
 
