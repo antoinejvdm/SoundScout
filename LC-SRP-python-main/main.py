@@ -100,10 +100,10 @@ N_aux = range(0,3);
 # approximation error in dB
 
 
-approxErr_dB=np.zeros((len(true_loc), L, len(N_aux)))
-locErr=np.zeros((len(true_loc), L, len(N_aux)+1))
+# approxErr_dB=np.zeros((len(true_loc), L, len(N_aux)))
+# locErr=np.zeros((len(true_loc), L, len(N_aux)+1))
 
-res = {'field1': approxErr_dB, 'field2': locErr};
+# res = {'field1': approxErr_dB, 'field2': locErr};
 
 
 
@@ -117,38 +117,38 @@ for true_loc_idx in range (1,len(true_loc)+1):
     #speech componentfor selected source
     x_TD,samplerate = sf.read('x_loc' +str(true_loc_idx)+ '.wav');
     #noise component
-    v_TD,sr = sf.read('v.wav');
+    # v_TD,sr = sf.read('v.wav');
     #scale noise component
     from set_SNR import set_SNR
-    v_TD = set_SNR(x_TD, v_TD, SNR);
+    # v_TD = set_SNR(x_TD, v_TD, SNR);
 
     # transform to STFT domain
     from calc_STFT import calc_STFT
     x_STFT,f_x = calc_STFT(x_TD, fs, win, N_STFT, R_STFT, 'onesided');
-    v_STFT,f_v = calc_STFT(v_TD, fs, win, N_STFT, R_STFT, 'onesided');
+    # v_STFT,f_v = calc_STFT(v_TD, fs, win, N_STFT, R_STFT, 'onesided');
 
-    # discard frames that do not contain speech energy(local SNR 15 dB below average)
-    l = 1;
-    useframe_idx = np.array([]);
-    while len(useframe_idx) < L:
-        SNR_local = 10*math.log(((sum(np.power(abs(x_STFT[:, l-1, 1-1]), 2)) / sum(np.power(abs(v_STFT[:, l-1, 1-1]), 2)))),10);
-        if SNR_local > SNR - 15:
-            useframe_idx=np.append(useframe_idx, l, axis=None)
-        l = l + 1;
+    # # discard frames that do not contain speech energy(local SNR 15 dB below average)
+    # l = 1;
+    # useframe_idx = np.array([]);
+    # while len(useframe_idx) < L:
+    #     SNR_local = 10*math.log(((sum(np.power(abs(x_STFT[:, l-1, 1-1]), 2)) / sum(np.power(abs(v_STFT[:, l-1, 1-1]), 2)))),10);
+    #     if SNR_local > SNR - 15:
+    #         useframe_idx=np.append(useframe_idx, l, axis=None)
+    #     l = l + 1;
 
 
-    # final microphone signal in STFT domain
-    len_frame=len(useframe_idx)
-    y_STFT = x_STFT[:, range(0, len_frame), :] + v_STFT[:, range(0, len_frame), :];
-    for i in range(1, len_frame + 1):
-        y_STFT[:, i - 1, :] = x_STFT[:, int(useframe_idx[i - 1]) - 1, :] + v_STFT[:, int(useframe_idx[i - 1]) - 1,
-                                                                                :];
+    # # final microphone signal in STFT domain
+    # len_frame=len(useframe_idx)
+    # y_STFT = x_STFT[:, range(0, len_frame), :] + v_STFT[:, range(0, len_frame), :];
+    # for i in range(1, len_frame + 1):
+    #     y_STFT[:, i - 1, :] = x_STFT[:, int(useframe_idx[i - 1]) - 1, :] + v_STFT[:, int(useframe_idx[i - 1]) - 1,
+    #                                                                             :];
 
 
 
     ## PROCESSING
     from calc_FD_GCC import calc_FD_GCC
-    psi_STFT = calc_FD_GCC(y_STFT); #sorun yok
+    psi_STFT = calc_FD_GCC(x_STFT); #sorun yok
 
     #conventional SRP
 
@@ -209,8 +209,8 @@ for true_loc_idx in range (1,len(true_loc)+1):
 
     ####
 
-    approxErr_dB = np.zeros([L, len(N_aux)]);
-    locErr = np.zeros([L, len(N_aux) + 1]);
+    # approxErr_dB = np.zeros([L, len(N_aux)]);
+    # locErr = np.zeros([L, len(N_aux) + 1]);
 
     # maxIdx_conv = np.argmax(SRP_conv, 1);
     # maxIdx_conv = maxIdx_conv.reshape(-1,1);
@@ -231,8 +231,8 @@ for true_loc_idx in range (1,len(true_loc)+1):
     #     locErr[:, N_aux_ind] = np.rad2deg(np.arccos(np.dot(estim_DOAvec , np.transpose(true_DOAvec[true_loc_idx-1,:]))/(np.sqrt(np.sum(np.power(estim_DOAvec,2), axis=1)) * LA.norm(true_DOAvec[true_loc_idx-1,:]))));
 
 
-    res['field1'][true_loc_idx-1,:,:] = approxErr_dB;
-    res['field2'][true_loc_idx-1,:,:] = locErr;
+    # res['field1'][true_loc_idx-1,:,:] = approxErr_dB;
+    # res['field2'][true_loc_idx-1,:,:] = locErr;
 
 print('DONE.')
 
