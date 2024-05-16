@@ -7,7 +7,6 @@ def calc_SRPconv(Psi_STFT, omega, Delta_t_i):
     P = np.size(Delta_t_i,1);
     K = np.size(Psi_STFT,0);
     L = np.size(Psi_STFT,1);
-    P = np.size(Psi_STFT,2);
 
     SRP_stack = np.zeros([L,J]);
     for l in range (1, L+1):
