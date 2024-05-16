@@ -162,7 +162,7 @@ for true_loc_idx in range (1,len(true_loc)+1):
 
     print('* compute conventional SRP (stay tuned, this will take a few minutes)...')
     t = time.time();
-    print (t)
+    print(t)
     from calc_SRPconv import calc_SRPconv
     SRP_conv = calc_SRPconv(psi_STFT, omega, Delta_t_i);
     elapsed = time.time() - t;
@@ -170,32 +170,33 @@ for true_loc_idx in range (1,len(true_loc)+1):
     print('_____________==')
 
     data_array = np.array(SRP_conv)
-    print(data_array[1])
+    print(data_array[0])
 
 
-    # Define angles from 0 to 180 degrees
-    angles_degrees = np.linspace(0, 360, len(data_array[1]))
-    # Convert angles to radians
-    angles_radians = np.radians(angles_degrees)
-    # Convert lengths to x and y coordinates
-    x = data_array[1] * np.cos(angles_radians)
-    y = data_array[1] * np.sin(angles_radians)
+    for i in range(1, len_frame + 1):
+        # Define angles from 0 to 180 degrees
+        angles_degrees = np.linspace(0, 360, len(data_array[i-1]))
+        # Convert angles to radians
+        angles_radians = np.radians(angles_degrees)
+        # Convert lengths to x and y coordinates
+        x = data_array[i-1] * np.cos(angles_radians)
+        y = data_array[i-1] * np.sin(angles_radians)
 
-    max_peak_index = np.argmax(data_array[1])
+        max_peak_index = np.argmax(data_array[i-1])
 
-    # Plot vectors
-    ax2.clear()
-    ax2.set_xlabel('X-coordinate')
-    ax2.set_ylabel('Y-coordinate')
-    ax2.set_title(f'Vectors at Different Angles: {angles_degrees[max_peak_index]:.2f} deg')
-    ax2.grid(True)
-    ax2.plot(x, y, marker='+', linestyle='-')
-    ax2.set_aspect('equal')
-    ax2.quiver(0, 0, x[max_peak_index], y[max_peak_index],scale=1, scale_units='xy',color='blue')
+        # Plot vectors
+        ax2.clear()
+        ax2.set_xlabel('X-coordinate')
+        ax2.set_ylabel('Y-coordinate')
+        ax2.set_title(f'Vectors at Different Angles: {angles_degrees[max_peak_index]:.2f} deg')
+        ax2.grid(True)
+        ax2.plot(x, y, marker='+', linestyle='-')
+        ax2.set_aspect('equal')
+        ax2.quiver(0, 0, x[max_peak_index], y[max_peak_index],scale=1, scale_units='xy',color='blue')
 
-    visualization_of_angle(axis_visualization,angles_radians[max_peak_index])
-    plt.draw()  # Update the plot
-    plt.pause(0.3) # this delay must be there for actualization of graph
+        visualization_of_angle(axis_visualization,angles_radians[max_peak_index])
+        plt.draw()  # Update the plot
+        plt.pause(0.3) # this delay must be there for actualization of graph
 
     print('done')
 
