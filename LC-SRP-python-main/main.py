@@ -128,7 +128,7 @@ with sf.SoundFile(file_path, 'r') as f:
     # Loop through the file in chunks of 64 frames
     for iteration in range(f.frames // frames_per_iteration):
         start_pos = start_frame + (iteration * frames_per_iteration)
-        x_TD, samplerate = sf.read('x_loc1.wav', start=start_pos, frames=frames_per_iteration)
+        x_TD, samplerate = sf.read(file_path, start=start_pos, frames=frames_per_iteration)
 
         #x_TD, samplerate = sf.read('x_loc1.wav', start=1024, frames=64)
         print('x_TD',x_TD.shape)
