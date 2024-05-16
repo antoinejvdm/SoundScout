@@ -22,6 +22,7 @@ import time
 ### ACOUSTIC SETUP
 from numpy import linalg as LA
 import numpy as np
+import pandas as pd
 
 
 import scipy.io as spio
@@ -43,19 +44,10 @@ SNR = 6;
 # circular array, 10cm radius, six microphones
 import scipy.io
 #import matplotlib.pyplot as plt
-tmp = scipy.io.loadmat('coord_mic_array.mat')
-# array center
-arrayCenterPos = tmp.get('arrayCenterPos')
-# microphone positions
-micPos = tmp.get('micPos');
-# number of microphones
-M = len(micPos)
+mic_positions_df = pd.read_csv('mic_positions_4ch.csv')
+micPos = mic_positions_df[['X', 'Y', 'Z']].to_numpy()  # Ensure columns match your CSV's column names
 
-### SOURCE LOCATIONS
-# 8 different locations
-tmp = scipy.io.loadmat('coord_loc_1_8.mat');
-true_loc = tmp.get('true_loc');
-# compute ground truth DOA vectors for source locations
+
 
 L = 32;
 
@@ -94,68 +86,62 @@ N_aux = range(0,3);
 
 ## PROCESSING
 import soundfile as sf
+#GENERATE MICROPHONE SIGNALS
+#speech componentfor selected source
+x_TD, samplerate = sf.read('audio_outputEcho0p99_merged.wav')
+# transform to STFT domain
+from calc_STFT import calc_STFT
+x_STFT,f_x = calc_STFT(x_TD, fs, win, N_STFT, R_STFT, 'onesided');
 
-for true_loc_idx in range (1,len(true_loc)+1):
-#for true_loc_idx in range (1,2):
+## PROCESSING
+from calc_FD_GCC import calc_FD_GCC
+psi_STFT = calc_FD_GCC(x_STFT); #sorun yok
 
-    print(['PROCESSING SOURCE LOCATION'+str(true_loc_idx)])
-    #GENERATE MICROPHONE SIGNALS
-    #speech componentfor selected source
-    x_TD,samplerate = sf.read('x_loc' +str(true_loc_idx)+ '.wav');
+#conventional SRP
 
-    # transform to STFT domain
-    from calc_STFT import calc_STFT
-    x_STFT,f_x = calc_STFT(x_TD, fs, win, N_STFT, R_STFT, 'onesided');
+print('* compute conventional SRP (stay tuned, this will take a few minutes)...')
+t = time.time();
+print (t)
+from calc_SRPconv import calc_SRPconv
+SRP_conv = calc_SRPconv(psi_STFT, omega, Delta_t_i);
+elapsed = time.time() - t;
+print(elapsed)
+print('_____________==')
+data_array = np.array(SRP_conv)
+#find max
+print(data_array.shape)
+print(data_array[1])
 
-    ## PROCESSING
-    from calc_FD_GCC import calc_FD_GCC
-    psi_STFT = calc_FD_GCC(x_STFT); #sorun yok
+from PeakPeaking import finde_max
+plt.figure(figsize=(8, 6))
+for i in range(1,len(SRP_conv)): #len(SRP_conv)
+    angles_degrees = np.linspace(0, 360, len(data_array[i]))
+    angles_radians = np.radians(angles_degrees)
+    maxes = finde_max(data_array[i],10,angles_radians)
 
-    #conventional SRP
+    x = data_array[i] * np.cos(angles_radians)
+    y = data_array[i] * np.sin(angles_radians)
 
-    print('* compute conventional SRP (stay tuned, this will take a few minutes)...')
-    t = time.time();
-    print (t)
-    from calc_SRPconv import calc_SRPconv
-    SRP_conv = calc_SRPconv(psi_STFT, omega, Delta_t_i);
-    elapsed = time.time() - t;
-    print(elapsed)
-    print('_____________==')
-    data_array = np.array(SRP_conv)
-    #find max
-    print(data_array.shape)
-    print(data_array[1])
+    # Debug information
+    print(f"Time Frame {i + 1}")
+    print(f"Max Point: ({maxes[0]}, {maxes[1]})")
+    print(f"Second Max Point: ({maxes[2]}, {maxes[3]})")
 
-    from PeakPeaking import finde_max
-    plt.figure(figsize=(8, 6))
-    for i in range(1,len(SRP_conv)): #len(SRP_conv)
-        angles_degrees = np.linspace(0, 360, len(data_array[i]))
-        angles_radians = np.radians(angles_degrees)
-        maxes = finde_max(data_array[i],10,angles_radians)
-
-        x = data_array[i] * np.cos(angles_radians)
-        y = data_array[i] * np.sin(angles_radians)
-
-        # Debug information
-        print(f"Time Frame {i + 1}")
-        print(f"Max Point: ({maxes[0]}, {maxes[1]})")
-        print(f"Second Max Point: ({maxes[2]}, {maxes[3]})")
-
-        # Plot vectors
-        plt.clf()
-        #plt.plot(x, y)
-        plt.plot(x, y, label=f'Time Frame {i + 1}')
-        #plt.scatter(x, y, color='blue', label='all_points')
-        plt.scatter(maxes[0], maxes[1], color='red', label='max1')
-        plt.scatter(maxes[2], maxes[3], color='orange', label='max2')
-        plt.scatter(0, 0, color='orange', label='center')
-        plt.xlabel('X-coordinate')
-        plt.ylabel('Y-coordinate')
-        plt.title('Vectors at Different Angles')
-        plt.grid(True)
-        plt.pause(0.5)
-    plt.show()
-        
-    print('done')
+    # Plot vectors
+    plt.clf()
+    #plt.plot(x, y)
+    plt.plot(x, y, label=f'Time Frame {i + 1}')
+    #plt.scatter(x, y, color='blue', label='all_points')
+    plt.scatter(maxes[0], maxes[1], color='red', label='max1')
+    plt.scatter(maxes[2], maxes[3], color='orange', label='max2')
+    plt.scatter(0, 0, color='orange', label='center')
+    plt.xlabel('X-coordinate')
+    plt.ylabel('Y-coordinate')
+    plt.title('Vectors at Different Angles')
+    plt.grid(True)
+    plt.pause(0.5)
+plt.show()
+    
+print('done')
 print('DONE.')
 
