@@ -21,7 +21,6 @@ import matplotlib.pyplot as plt
 import time
 ### ACOUSTIC SETUP
 from numpy import linalg as LA
-
 import numpy as np
 
 
@@ -37,6 +36,8 @@ pi=math.pi
 w_0 = pi*fs;
 #SNR in dB
 SNR = 6;
+
+
 
 ## MICROPHONE ARRAY
 # circular array, 10cm radius, six microphones
@@ -160,24 +161,40 @@ for true_loc_idx in range (1,len(true_loc)+1):
     print(elapsed)
     print('_____________==')
     data_array = np.array(SRP_conv)
+    #find max
+    print(data_array.shape)
     print(data_array[1])
 
-    # Define angles from 0 to 180 degrees
-    angles_degrees = np.linspace(0, 360, len(data_array[1]))
-    # Convert angles to radians
-    angles_radians = np.radians(angles_degrees)
-    # Convert lengths to x and y coordinates
-    x = data_array[1] * np.cos(angles_radians)
-    y = data_array[1] * np.sin(angles_radians)
-    # Plot vectors
+    from PeakPeaking import finde_max
     plt.figure(figsize=(8, 6))
-    plt.plot(x, y)
-    # plt.scatter(x, y, color='red', label='End Point')
-    plt.xlabel('X-coordinate')
-    plt.ylabel('Y-coordinate')
-    plt.title('Vectors at Different Angles')
-    plt.grid(True)
+    for i in range(1,len(SRP_conv)): #len(SRP_conv)
+        angles_degrees = np.linspace(0, 360, len(data_array[i]))
+        angles_radians = np.radians(angles_degrees)
+        maxes = finde_max(data_array[i],10,angles_radians)
+
+        x = data_array[i] * np.cos(angles_radians)
+        y = data_array[i] * np.sin(angles_radians)
+
+        # Debug information
+        print(f"Time Frame {i + 1}")
+        print(f"Max Point: ({maxes[0]}, {maxes[1]})")
+        print(f"Second Max Point: ({maxes[2]}, {maxes[3]})")
+
+        # Plot vectors
+        plt.clf()
+        #plt.plot(x, y)
+        plt.plot(x, y, label=f'Time Frame {i + 1}')
+        #plt.scatter(x, y, color='blue', label='all_points')
+        plt.scatter(maxes[0], maxes[1], color='red', label='max1')
+        plt.scatter(maxes[2], maxes[3], color='orange', label='max2')
+        plt.scatter(0, 0, color='orange', label='center')
+        plt.xlabel('X-coordinate')
+        plt.ylabel('Y-coordinate')
+        plt.title('Vectors at Different Angles')
+        plt.grid(True)
+        plt.pause(0.5)
     plt.show()
+        
     print('done')
 
 
