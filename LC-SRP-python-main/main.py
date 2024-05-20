@@ -39,9 +39,9 @@ SNR = 6;
 ## MICROPHONE ARRAY
 # circular array, 10cm radius, six microphones
 import scipy.io
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 mic_positions_df = pd.read_csv('mic_positions_4ch.csv')
-micPos = mic_positions_df[['X', 'Y', 'Z']].to_numpy()  # Ensure columns match your CSV's column names
+micPos = mic_positions_df[['X','Y','Z']].to_numpy()  # Ensure columns match your CSV's column names
 
 # STFT PARAMETERS
 # window size
@@ -86,7 +86,7 @@ plt.pause(0.3) #before starting computing the angle there must be longer pause t
 
 import soundfile as sf
 
-file_path = 'simulation_20sources.wav'
+file_path = '4c_moving.wav'
 
 # Define parameters
 start_frame = 0
@@ -151,7 +151,7 @@ with sf.SoundFile(file_path, 'r') as f:
 
         update_visualization(axis_visualization,angles_radians[maxes[0]], angles_radians[maxes[1]])
         plt.draw()  # Update the plot
-        plt.pause(0.05) # this delay must be there for actualization of graph
+        plt.pause(0.01) # this delay must be there for actualization of graph
 
         print('done')
 
