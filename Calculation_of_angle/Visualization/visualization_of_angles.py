@@ -1,11 +1,4 @@
-import matplotlib.pyplot as plt
-import random
 import numpy as np
-
-plt.ion()  # animation mode
-fig = plt.figure()
-ax = fig.add_subplot(projection='3d')
-plt.show()
 
 def update_visualization(ax, angle1, angle2):
     ax.clear()

@@ -21,10 +21,9 @@ import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import soundfile as sf
-from Visualization.visualization_of_angles import update_visualization
+from Visualization.visualization_of_angle_speakerPos import visualization_of_angle_speakerPos
 from Functions.calc_deltaT import calc_deltaT
 from Functions.calc_deltaTime import calc_deltaTime
-from Functions.calc_sampleParam import calc_sampleParam
 from Functions.calc_STFT_frames import calc_STFT_frames
 from Functions.calc_FD_GCC_frames import calc_FD_GCC_frames
 from Functions.calc_SRPconv_frames import calc_SRPconv_frames
@@ -89,7 +88,6 @@ with sf.SoundFile(file_path, 'r') as f:
         psi_STFT = calc_FD_GCC_frames(x_STFT)
 
         #conventional SRP
-
         t = time.time();
         SRP_conv = calc_SRPconv_frames(psi_STFT, omega, Delta_t_i)
         elapsed = time.time() - t
@@ -113,11 +111,9 @@ with sf.SoundFile(file_path, 'r') as f:
         ax2.set_ylim(-70000, 70000)
         ax2.set_aspect('equal')
         ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
-        #ax2.quiver(0, 0, x[maxes[1]], y[maxes[1]],scale=1, scale_units='xy',color='blue')
 
-        update_visualization(axis_visualization,angles_radians[maxes[0]], angles_radians[maxes[1]])
+        visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]])
         plt.draw()
-        #plt.pause(0.01)
         plt.pause(0.01)
 
         elapsed_iter = time.time() - t_iter
