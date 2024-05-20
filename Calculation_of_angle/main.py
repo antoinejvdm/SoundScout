@@ -40,7 +40,7 @@ plt.pause(0.3)
 
 
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/output_moving_sound_4ch.wav'
+file_path = 'Audio_simulations/output_moving_sound_song_4ch.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -104,11 +104,11 @@ with sf.SoundFile(file_path, 'r') as f:
         ax2.clear()
         ax2.set_xlabel('X-coordinate')
         ax2.set_ylabel('Y-coordinate')
-        ax2.set_title("iteration: " + str(iteration))
+        ax2.set_title("iteration: " + str(iteration+1))
         ax2.grid(True)
         ax2.plot(x, y, marker='+', linestyle='-')
-        ax2.set_xlim(-70000, 70000)
-        ax2.set_ylim(-70000, 70000)
+        ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+        ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
         ax2.set_aspect('equal')
         ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
 
@@ -119,3 +119,4 @@ with sf.SoundFile(file_path, 'r') as f:
         elapsed_iter = time.time() - t_iter
         print('Time of iteration = ', elapsed_iter)
 
+plt.pause(10)

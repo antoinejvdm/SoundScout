@@ -38,8 +38,8 @@ def visualization_of_angle_speakerPos(ax,angle):
     ax.scatter(center_of_mic_array[0], center_of_mic_array[1], center_of_mic_array[2], color='gray', alpha=1, s=150)
 
     ax.quiver(center_of_mic_array[0], center_of_mic_array[1], center_of_mic_array[2], np.cos(angle), np.sin(angle), 0, length=2.0,
-              color='blue')
-    ax.set_title(f'Angle: {angle:.2f} deg')
+              color='red')
+    ax.set_title(f'Angle: {np.rad2deg(angle):.2f} deg')
 
     for i in range(len(source_coordinates)):
         ax.scatter(7 - source_coordinates[i][0], 3 - source_coordinates[i][1], 2, c='blue', marker='o', alpha=0)

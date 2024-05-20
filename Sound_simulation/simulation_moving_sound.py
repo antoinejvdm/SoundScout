@@ -10,9 +10,9 @@ corners = np.array([[0,0], [10,0], [10,6], [0,6]]).T  # [x,y]
 room_a = pra.Room.from_corners(corners)
 
 # specify signal source
-fs, signal = wavfile.read("Asine_6s.wav")
+fs, signal = wavfile.read("Coldplay - Viva La Vida (short).wav")
 
-with sf.SoundFile("Asine_6s.wav", 'r') as f:
+with sf.SoundFile("Coldplay - Viva La Vida (short).wav", 'r') as f:
     num_frames = len(f)
     sample_rate = f.samplerate
     # Select a chunk from the file (in seconds)
@@ -86,7 +86,7 @@ room.image_source_model()
 room.simulate()
 for i in range(4):
     audio_outputEcho = Audio(room.mic_array.signals[i, :],rate=fs)
-    with open("moving_sound_audio/audio_output" + str(i) + ".wav", "wb") as f:
+    with open("moving_sound_audio_song/audio_output" + str(i) + ".wav", "wb") as f:
         f.write(audio_outputEcho.data)
 
 # visualize 3D polyhedron room and image sources
@@ -154,10 +154,10 @@ def merge_wav_files(file_paths, output_path):
         out_wave.writeframes(combined_frames.tobytes())
 
 # Example usage
-file_paths = ['moving_sound_audio/audio_output0.wav',
-              'moving_sound_audio/audio_output1.wav',
-              'moving_sound_audio/audio_output2.wav',
-              'moving_sound_audio/audio_output3.wav']
+file_paths = ['moving_sound_audio_song/audio_output0.wav',
+              'moving_sound_audio_song/audio_output1.wav',
+              'moving_sound_audio_song/audio_output2.wav',
+              'moving_sound_audio_song/audio_output3.wav']
 
-output_path = 'moving_sound_audio/output_moving_sound_4ch.wav'
+output_path = 'moving_sound_audio_song/output_moving_sound_song_4ch.wav'
 merge_wav_files(file_paths, output_path)

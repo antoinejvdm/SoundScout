@@ -30,10 +30,10 @@ def merge_wav_files(file_paths, output_path):
 
 
 # Example usage
-file_paths = ['moving_sound_audio/audio_output0.wav',
-              'moving_sound_audio/audio_output1.wav',
-              'moving_sound_audio/audio_output2.wav',
-              'moving_sound_audio/audio_output3.wav']
+file_paths = ['moving_sound_audio_song/audio_output0.wav',
+              'moving_sound_audio_song/audio_output1.wav',
+              'moving_sound_audio_song/audio_output2.wav',
+              'moving_sound_audio_song/audio_output3.wav']
 
-output_path = 'moving_sound_audio/output_moving_sound_4ch.wav'
+output_path = 'moving_sound_audio_song/output_moving_sound_song_4ch.wav'
 merge_wav_files(file_paths, output_path)

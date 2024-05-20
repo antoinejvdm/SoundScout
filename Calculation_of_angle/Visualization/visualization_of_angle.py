@@ -24,4 +24,4 @@ def visualization_of_angle(ax,angle):
 
     ax.quiver(0, 0, 0, np.cos(angle), np.sin(angle), 0, length=2.0,
               color='red')
-    ax.set_title(f'Angle: {angle:.2f} deg')
+    ax.set_title(f'Angle: {np.rad2deg(angle):.2f} deg')
