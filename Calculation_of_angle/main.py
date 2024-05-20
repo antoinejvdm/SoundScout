@@ -17,11 +17,14 @@
 ################################################################################################
 import numpy as np
 import math
+import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import soundfile as sf
 from Visualization.visualization_of_angles import update_visualization
 from Functions.calc_deltaT import calc_deltaT
+from Functions.calc_deltaTime import calc_deltaTime
+from Functions.calc_sampleParam import calc_sampleParam
 from Functions.calc_STFT_frames import calc_STFT_frames
 from Functions.calc_FD_GCC_frames import calc_FD_GCC_frames
 from Functions.calc_SRPconv_frames import calc_SRPconv_frames
@@ -60,7 +63,7 @@ micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 ang_pol= [90] # we only use the horizontal plane inside the sphere
 ang_az = np.arange(0,359,2).tolist() # azimuth angles of candidate locations
 # compute candidate DOA vectors
-DOAvec_i, Delta_t_i = calc_deltaT(micPos, ang_pol, ang_az, c)
+DOAvec_i, Delta_t_i = calc_deltaTime(micPos, ang_pol, ang_az,'polar',c)
 
 # STFT PARAMETERS
 N_STFT = fs # window size We set N_STFT to the sampling rate fs to have a window size of one second.
@@ -75,18 +78,22 @@ frames_per_iteration = N_STFT
 # Open the audio file
 with sf.SoundFile(file_path, 'r') as f:
     for iteration in range(f.frames // frames_per_iteration):
+        t_iter = time.time();
         start_pos = start_frame + (iteration * frames_per_iteration)
         x_TD, samplerate = sf.read(file_path, start=start_pos, frames=frames_per_iteration)
-        print(total_duration_seconds)
 
         # transform to STFT domain
-        x_STFT,f_x = calc_STFT_frames(x_TD, fs, win, N_STFT,'onesided');
+        x_STFT,f_x = calc_STFT_frames(x_TD, fs, win, N_STFT,'onesided')
 
         # PROCESSING
         psi_STFT = calc_FD_GCC_frames(x_STFT)
 
         #conventional SRP
+
+        t = time.time();
         SRP_conv = calc_SRPconv_frames(psi_STFT, omega, Delta_t_i)
+        elapsed = time.time() - t
+        print('Time of SRPconv computation = ',elapsed)
 
         data_array = np.array(SRP_conv)
         angles_degrees = np.linspace(0, 360, len(data_array))
@@ -113,5 +120,6 @@ with sf.SoundFile(file_path, 'r') as f:
         #plt.pause(0.01)
         plt.pause(0.01)
 
-        print('done')
+        elapsed_iter = time.time() - t_iter
+        print('Time of iteration = ', elapsed_iter)
 
