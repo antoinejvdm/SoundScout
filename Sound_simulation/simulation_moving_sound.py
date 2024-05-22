@@ -45,9 +45,12 @@ radius = 2.0
 angles = np.linspace(0, 2*np.pi, num_sources, endpoint=False)
 #print('angles: ', angles)
 
+# Center of the Source Array
+sources_center = [7,3,2]
+
 # Calculate Cartesian coordinates for each sound source
-x_sources = radius * np.cos(angles)
-y_sources = radius * np.sin(angles)
+x_sources = sources_center[0] - (radius * np.cos(angles))
+y_sources = sources_center[1] - (radius * np.sin(angles))
 z_sources = 2
 #print('x_sources: ', x_sources)
 #print('y_sources: ', y_sources)
@@ -55,14 +58,14 @@ z_sources = 2
 print('mono_signal shape: ', mono_signal.shape[0])
 print('mono_signal divided shape: ', mono_signal.shape[0])
 
-source_coordinates = np.zeros((len(x_sources), 2))
+source_coordinates = np.zeros((len(x_sources), 3))
 #print('source coords: ', source_coordinates)
 
 # add sources and set the signal to WAV file content
 for i in range(num_sources):
     #room.add_source([7 - x_sources[i], 3 - y_sources[i], z_sources], signal=mono_signal[i*int(mono_signal.shape[0]/num_sources):(i+1)*int(mono_signal.shape[0]/num_sources)], delay=i*(duration_seconds/num_sources)) # [5,3,2] is the coordinate of the room's center
-    room.add_source([7 - x_sources[i], 3 - y_sources[i], z_sources], signal=mono_signal, delay=i*duration_seconds) # [5,3,2] is the coordinate of the room's center
-    source_coordinates[i] = (x_sources[i], y_sources[i])
+    room.add_source([x_sources[i], y_sources[i], z_sources], signal=mono_signal, delay=i*duration_seconds) # [5,3,2] is the coordinate of the room's center
+    source_coordinates[i] = (x_sources[i], y_sources[i], z_sources)
 print('source coords: ', source_coordinates)
 
 # for i in range(2):    
@@ -104,8 +107,8 @@ ax = fig2.add_subplot(111, projection='3d')
 for i in range(len(source_coordinates)):
     #plt.scatter(source_coordinates[i][0], source_coordinates[i][1], marker="*", color="white")  # Scatter plot of the points
     #plt.text(source_coordinates[i][0], source_coordinates[i][1], str(i), color='blue', fontsize=12, ha='center', va='center')
-    ax.scatter(7 - source_coordinates[i][0], 3 - source_coordinates[i][1], 2, c='blue', marker='o', alpha=0)
-    ax.text(7 - source_coordinates[i][0], 3 - source_coordinates[i][1], 2, str(i), color='blue', fontsize=7, ha='center', va='center')
+    ax.scatter(source_coordinates[i][0], source_coordinates[i][1], 2, c='blue', marker='o', alpha=0)
+    ax.text(source_coordinates[i][0], source_coordinates[i][1], 2, str(i), color='blue', fontsize=7, ha='center', va='center')
 ax.scatter(mic_positions[0], mic_positions[1], mic_positions[2], color='black', marker='x')
 
 ax.set_xlim(0, 10)
