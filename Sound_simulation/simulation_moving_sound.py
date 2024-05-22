@@ -34,7 +34,6 @@ room.set_ray_tracing(receiver_radius=0.5, n_rays=10000, energy_thres=1e-5)
 
 # Number of sound sources
 num_sources = 20
-
 # Radius of the source array circle
 radius = 2.0
 # Angular positions of the sound sources
@@ -73,8 +72,6 @@ room.add_microphone(mic_positions)
 mic_coordinates = np.zeros((num_mics, 3))
 for i in range(num_mics):
     mic_coordinates[i] = (mic_positions[0][i], mic_positions[1][i], mic_positions[2][i])
-
-
 # CSV file for saving position of microphones
 filename = "moving_sound_audio_song/microphone_coordinates.csv"
 with open(filename, mode='w', newline='') as file:

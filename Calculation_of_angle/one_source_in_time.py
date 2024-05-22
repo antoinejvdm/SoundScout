@@ -40,7 +40,7 @@ plt.pause(0.3)
 
 
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/Sound_moving_around/output_moving_sound_song_4ch.wav'
+file_path = 'Audio_simulations/Continous_sound_moving/output_moving_sound_song_4ch_40sec.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -54,11 +54,11 @@ pi=math.pi
 w_0 = pi*fs
 
 ## MICROPHONE ARRAY
-mic_positions_df = pd.read_csv('CSV_files/Sound_moving_around/microphone_coordinates.csv')
+mic_positions_df = pd.read_csv('CSV_files/Continous_sound_moving/microphone_coordinates.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
 ## SPEAKERS POSITION
-speaker_positions_df = pd.read_csv('CSV_files/Sound_moving_around/source_coordinates.csv')
+speaker_positions_df = pd.read_csv('CSV_files/Continous_sound_moving/source_coordinates.csv')
 speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
 
 # CANDIDATE LOCATIONS
@@ -68,8 +68,10 @@ ang_az = np.arange(0,359,2).tolist() # azimuth angles of candidate locations
 # compute candidate DOA vectors
 DOAvec_i, Delta_t_i = calc_deltaTime(micPos, ang_pol, ang_az,'polar',c)
 
+print(fs)
 # STFT PARAMETERS
-N_STFT = fs # window size We set N_STFT to the sampling rate fs to have a window size of one second.
+#N_STFT = fs # window size We set N_STFT to the sampling rate fs to have a window size of one second.
+N_STFT = 2048
 R_STFT = N_STFT/2 # shift
 win = np.sqrt(np.hanning(N_STFT)) # window
 N_STFT_half = math.floor(N_STFT/2)+1
@@ -95,7 +97,10 @@ with sf.SoundFile(file_path, 'r') as f:
         t = time.time();
         SRP_conv = calc_SRPconv_frames(psi_STFT, omega, Delta_t_i)
         elapsed = time.time() - t
-        print('Time of SRPconv computation = ',elapsed)
+        print('Time of SRPconv computation = ', elapsed)
+
+        elapsed_iter = time.time() - t_iter
+        print('Time of iteration = ', elapsed_iter)
 
         data_array = np.array(SRP_conv)
         angles_degrees = np.linspace(0, 360, len(data_array))
@@ -105,22 +110,20 @@ with sf.SoundFile(file_path, 'r') as f:
 
         maxes = finde_max(data_array,10,angles_radians)
 
-        ax2.clear()
-        ax2.set_xlabel('X-coordinate')
-        ax2.set_ylabel('Y-coordinate')
-        ax2.set_title("iteration: " + str(iteration+1))
-        ax2.grid(True)
-        ax2.plot(x, y, linestyle='-',alpha=0.5)
-        ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
-        ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
-        ax2.set_aspect('equal')
-        ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
+        if(iteration % 10 == 0):
+            ax2.clear()
+            ax2.set_xlabel('X-coordinate')
+            ax2.set_ylabel('Y-coordinate')
+            ax2.set_title("iteration: " + str(iteration+1))
+            ax2.grid(True)
+            ax2.plot(x, y, linestyle='-',alpha=0.5)
+            ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+            ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+            ax2.set_aspect('equal')
+            ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
 
-        visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]], micPos, speakerPos)
-        plt.draw()
-        plt.pause(0.01)
-
-        elapsed_iter = time.time() - t_iter
-        print('Time of iteration = ', elapsed_iter)
+            visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]], micPos, speakerPos)
+            plt.draw()
+            plt.pause(0.01)
 
 plt.pause(10)
