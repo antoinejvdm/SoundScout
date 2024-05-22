@@ -122,7 +122,7 @@ with sf.SoundFile(file_path, 'r') as f:
             ax2.clear()
             ax2.set_xlabel('X-coordinate')
             ax2.set_ylabel('Y-coordinate')
-            ax2.set_title("iteration: " + str(iteration+1))
+            ax2.set_title("Iteration: " + str(iteration+1))
             ax2.grid(True)
             ax2.plot(x, y, linestyle='-',alpha=0.5)
             ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)

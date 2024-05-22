@@ -16,15 +16,14 @@ two_sources_simultaneous = 1
 
 ##################### END #####################
 
-corners = np.array([[0,0], [10,0], [10,6], [0,6]]).T  # [x,y]
+corners = np.array([[0,0], [10,0], [10,6], [0,6]]).T
 room_a = pra.Room.from_corners(corners)
 
 # specify signal source
-#fs, signal = wavfile.read("sound_simulation/Coldplay - Viva La Vida (short).wav")
-fs, signal = wavfile.read("raw_wav_files/speech1.wav")
+fs, signal = wavfile.read("raw_wav_files/AntoineRecording20sec.wav")
 print(signal.shape)
 
-with sf.SoundFile("raw_wav_files/speech1.wav", 'r') as f:
+with sf.SoundFile("raw_wav_files/AntoineRecording20sec.wav", 'r') as f:
     num_frames = len(f)
     sample_rate = f.samplerate
 
@@ -40,9 +39,9 @@ else:
 absorbption = 0.99
 
 # Second signal:
-fs2, signal2 = wavfile.read("raw_wav_files/speech2.wav")
+fs2, signal2 = wavfile.read("raw_wav_files/DriesRecording.wav")
 
-with sf.SoundFile("raw_wav_files/speech2.wav", 'r') as f2:
+with sf.SoundFile("raw_wav_files/DriesRecording.wav", 'r') as f2:
     num_frames2 = len(f2)
     sample_rate2 = f2.samplerate
 
@@ -55,6 +54,7 @@ if signal2.ndim > 1:
 else:
     mono_signal2 = signal2
 
+mono_signal2 = mono_signal2*0.5
 
 room = pra.Room.from_corners(corners, fs=fs, max_order=3, materials=pra.Material(absorbption, 0.99), ray_tracing=True, air_absorption=True)
 room.extrude(4., materials=pra.Material(absorbption, 0.99))
@@ -71,9 +71,9 @@ else:
     source_coordinates[0] = (5, 3, 2)
     source_coordinates[1] = (9, 4, 2)
     room.add_source([source_coordinates[0][0],source_coordinates[0][1],source_coordinates[0][2]], signal=mono_signal, delay=0)
-    room.add_source([source_coordinates[1][0],source_coordinates[1][1],source_coordinates[1][2]], signal=mono_signal, delay=3)
+    room.add_source([source_coordinates[1][0],source_coordinates[1][1],source_coordinates[1][2]], signal=mono_signal2, delay=0)
 # CSV file for saving position of speakers
-filename = "speech_audio_longer/source_coordinates.csv"
+filename = "our_speech_audio/source_coordinates.csv"
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["X", "Y", "Z"])
@@ -93,7 +93,7 @@ room.add_microphone(mic_positions)
 mic_coordinates = np.zeros((num_mics, 3))
 for i in range(num_mics):
     mic_coordinates[i] = (mic_positions[0][i], mic_positions[1][i], mic_positions[2][i])
-filename = "speech_audio_longer/microphone_coordinates.csv"
+filename = "our_speech_audio/microphone_coordinates.csv"
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["X", "Y", "Z"])
@@ -106,7 +106,7 @@ room.image_source_model()
 room.simulate()
 for i in range(4):
     audio_outputEcho = Audio(room.mic_array.signals[i, :],rate=fs)
-    with open("speech_audio_longer/audio_output" + str(i) + ".wav", "wb") as f:
+    with open("our_speech_audio/audio_output" + str(i) + ".wav", "wb") as f:
         f.write(audio_outputEcho.data)
 
 # visualize 3D polyhedron room and image sources
@@ -152,10 +152,10 @@ def merge_wav_files(file_paths, output_path):
         out_wave.writeframes(combined_frames.tobytes())
 
 # Example usage
-file_paths = ['speech_audio_longer/audio_output0.wav',
-              'speech_audio_longer/audio_output1.wav',
-              'speech_audio_longer/audio_output2.wav',
-              'speech_audio_longer/audio_output3.wav']
+file_paths = ['our_speech_audio/audio_output0.wav',
+              'our_speech_audio/audio_output1.wav',
+              'our_speech_audio/audio_output2.wav',
+              'our_speech_audio/audio_output3.wav']
 
-output_path = 'speech_audio_longer/output_two_sources_speech_longer.wav'
+output_path = 'our_speech_audio/output_our_speech_audio.wav'
 merge_wav_files(file_paths, output_path)

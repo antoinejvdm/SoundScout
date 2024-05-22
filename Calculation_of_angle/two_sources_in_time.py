@@ -40,7 +40,7 @@ plt.pause(0.3)
 
 
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/Two_sources_speech/output_two_sources_speech_longer.wav'
+file_path = 'Audio_simulations/Our_speech_two_sources/output_our_speech_audio.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -54,11 +54,11 @@ pi=math.pi
 w_0 = pi*fs
 
 ## MICROPHONE ARRAY
-mic_positions_df = pd.read_csv('CSV_files/Two_sources_speech/microphone_coordinates.csv')
+mic_positions_df = pd.read_csv('CSV_files/Our_speech_two_sources/microphone_coordinates.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
 ## SPEAKERS POSITION
-speaker_positions_df = pd.read_csv('CSV_files/Two_sources_speech/source_coordinates.csv')
+speaker_positions_df = pd.read_csv('CSV_files/Our_speech_two_sources/source_coordinates.csv')
 speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
 
 
@@ -121,15 +121,17 @@ with sf.SoundFile(file_path, 'r') as f:
         else:
             two_sources = False
 
-        if (iteration % 10 == 0):
+        if (iteration % 1 == 0):
             ax2.clear()
             ax2.set_xlabel('X-coordinate')
             ax2.set_ylabel('Y-coordinate')
-            ax2.set_title("iteration: " + str(iteration+1))
+            ax2.set_title("Iteration: " + str(iteration+1))
             ax2.grid(True)
             ax2.plot(x, y,linestyle='-',alpha=0.5)
-            ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
-            ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+            #ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+            #ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+            ax2.set_xlim(-6000, 6000) # to see real size of peaks
+            ax2.set_ylim(-6000, 6000)
             ax2.set_aspect('equal')
             ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
             if(two_sources):
@@ -139,11 +141,10 @@ with sf.SoundFile(file_path, 'r') as f:
             else:
                 visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]],micPos, speakerPos)
             plt.draw()
-            plt.pause(0.01)
-
-
+            plt.pause(0.005)
 
 print('Mean time for STFT = ', amount_time_STFT/iteration)
 print('Mean time for FD_GCC = ', amount_time_FD_GCC/iteration)
 print('Mean time for SRP = ', amount_time_SRP/iteration)
+print('Mean time for iteration = ', (amount_time_iter/iteration)*(fs/N_STFT))
 plt.pause(10)
