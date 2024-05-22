@@ -40,7 +40,7 @@ plt.pause(0.3)
 
 
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/output_two_sources_speech.wav'
+file_path = 'Audio_simulations/Two_sources_speech/output_two_sources_speech_longer.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -54,19 +54,19 @@ pi=math.pi
 w_0 = pi*fs
 
 ## MICROPHONE ARRAY
-mic_positions_df = pd.read_csv('CSV_files/mic_positions_4ch.csv')
+mic_positions_df = pd.read_csv('CSV_files/Two_sources_speech/microphone_coordinates.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
 ## SPEAKERS POSITION
-speaker_positions_df = pd.read_csv('CSV_files/20_speakers_position.csv')
+speaker_positions_df = pd.read_csv('CSV_files/Two_sources_speech/source_coordinates.csv')
 speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
+
 
 # CANDIDATE LOCATIONS
 # polar angles of candidate locations
 ang_pol= [90] # we only use the horizontal plane inside the sphere
 ang_az = np.arange(0,359,2).tolist() # azimuth angles of candidate locations
-# compute candidate DOA vectors
-DOAvec_i, Delta_t_i = calc_deltaTime(micPos, ang_pol, ang_az,'polar',c)
+DOAvec_i, Delta_t_i = calc_deltaTime(micPos, ang_pol, ang_az,'polar',c) # compute candidate DOA vectors
 
 # STFT PARAMETERS
 #N_STFT = fs # window size We set N_STFT to the sampling rate fs to have a window size of one second.
@@ -116,14 +116,13 @@ with sf.SoundFile(file_path, 'r') as f:
         ax2.set_ylabel('Y-coordinate')
         ax2.set_title("iteration: " + str(iteration+1))
         ax2.grid(True)
-        ax2.plot(x, y, marker='.', linestyle='-',alpha=0.5)
+        ax2.plot(x, y,linestyle='-',alpha=0.5)
         ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
         ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
         ax2.set_aspect('equal')
         ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
         if(two_sources):
             ax2.quiver(0, 0, x[maxes[1]], y[maxes[1]], scale=1, scale_units='xy', color='green')
-
         if (two_sources):
             visualization_of_angles_speakerPos(axis_visualization, angles_radians[maxes[0]], angles_radians[maxes[1]], micPos, speakerPos)
         else:

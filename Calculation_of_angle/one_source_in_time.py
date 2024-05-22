@@ -40,7 +40,7 @@ plt.pause(0.3)
 
 
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/output_moving_sound_song_4ch.wav'
+file_path = 'Audio_simulations/Sound_moving_around/output_moving_sound_song_4ch.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -54,11 +54,11 @@ pi=math.pi
 w_0 = pi*fs
 
 ## MICROPHONE ARRAY
-mic_positions_df = pd.read_csv('CSV_files/mic_positions_4ch.csv')
+mic_positions_df = pd.read_csv('CSV_files/Sound_moving_around/microphone_coordinates.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
 ## SPEAKERS POSITION
-speaker_positions_df = pd.read_csv('CSV_files/20_speakers_position.csv')
+speaker_positions_df = pd.read_csv('CSV_files/Sound_moving_around/source_coordinates.csv')
 speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
 
 # CANDIDATE LOCATIONS
@@ -110,7 +110,7 @@ with sf.SoundFile(file_path, 'r') as f:
         ax2.set_ylabel('Y-coordinate')
         ax2.set_title("iteration: " + str(iteration+1))
         ax2.grid(True)
-        ax2.plot(x, y, marker='+', linestyle='-')
+        ax2.plot(x, y, linestyle='-',alpha=0.5)
         ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
         ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
         ax2.set_aspect('equal')

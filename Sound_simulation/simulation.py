@@ -8,7 +8,7 @@ corners = np.array([[0,0], [10,0], [10,6], [0,6]]).T  # [x,y]
 room_a = pra.Room.from_corners(corners)
 
 # specify signal source
-fs, signal = wavfile.read("Coldplay - Viva La Vida (short).wav")
+fs, signal = wavfile.read("raw_wav_files/Coldplay - Viva La Vida (short).wav")
 mono_signal = np.sum(signal, axis=1 )
 absorbption = 0.99
 

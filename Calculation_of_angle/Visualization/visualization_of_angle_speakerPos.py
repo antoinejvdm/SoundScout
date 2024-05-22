@@ -20,8 +20,8 @@ def visualization_of_angle_speakerPos(ax,angle,micPos, speakerPos):
     ax.set_title(f'Angle: {np.rad2deg(angle):.2f} deg')
 
     for i in range(len(speakerPos)):
-        ax.scatter(7 - speakerPos[i][0], 3 - speakerPos[i][1], speakerPos[i][2], c='blue', marker='o', alpha=0)
-        ax.text(7 - speakerPos[i][0], 3 - speakerPos[i][1], speakerPos[i][2], str(i), color='blue', fontsize=7, ha='center', va='center')
+        ax.scatter(speakerPos[i][0], speakerPos[i][1], speakerPos[i][2], c='blue', marker='o', alpha=0)
+        ax.text(speakerPos[i][0], speakerPos[i][1], speakerPos[i][2], str(i), color='blue', fontsize=7, ha='center', va='center')
 
     for i in range(len(micPos)):
         ax.scatter(micPos[i][0], micPos[i][1], micPos[i][2], c='black', marker='+', alpha=0.8)
