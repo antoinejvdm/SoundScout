@@ -22,7 +22,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import soundfile as sf
 from Visualization.visualization_of_angle_speakerPos import visualization_of_angle_speakerPos
-from Functions.calc_deltaT import calc_deltaT
 from Functions.calc_deltaTime import calc_deltaTime
 from Functions.calc_STFT_frames import calc_STFT_frames
 from Functions.calc_FD_GCC_frames import calc_FD_GCC_frames
@@ -70,9 +69,8 @@ DOAvec_i, Delta_t_i = calc_deltaTime(micPos, ang_pol, ang_az,'polar',c)
 
 print(fs)
 # STFT PARAMETERS
-#N_STFT = fs # window size We set N_STFT to the sampling rate fs to have a window size of one second.
+#N_STFT = fs # set N_STFT to the sampling rate fs to have a window size of one second.
 N_STFT = 2048
-R_STFT = N_STFT/2 # shift
 win = np.sqrt(np.hanning(N_STFT)) # window
 N_STFT_half = math.floor(N_STFT/2)+1
 omega = 2*pi*np.transpose(np.linspace(0,fs/2,N_STFT_half)) # frequency vector
@@ -125,14 +123,16 @@ with sf.SoundFile(file_path, 'r') as f:
             ax2.set_title("Iteration: " + str(iteration+1))
             ax2.grid(True)
             ax2.plot(x, y, linestyle='-',alpha=0.5)
-            ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
-            ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+            #ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+            #ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
+            ax2.set_xlim(-8000, 8000)  # to see real size of peaks
+            ax2.set_ylim(-8000, 8000)
             ax2.set_aspect('equal')
             ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
 
             visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]], micPos, speakerPos)
             plt.draw()
-            plt.pause(0.01)
+            plt.pause(0.005)
 
 print('Mean time for STFT = ', (amount_time_STFT/iteration)*(fs/N_STFT))
 print('Mean time for FD_GCC = ', (amount_time_FD_GCC/iteration)*(fs/N_STFT))

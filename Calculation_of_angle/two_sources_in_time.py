@@ -69,9 +69,8 @@ ang_az = np.arange(0,359,2).tolist() # azimuth angles of candidate locations
 DOAvec_i, Delta_t_i = calc_deltaTime(micPos, ang_pol, ang_az,'polar',c) # compute candidate DOA vectors
 
 # STFT PARAMETERS
-#N_STFT = fs # window size We set N_STFT to the sampling rate fs to have a window size of one second.
+#N_STFT = fs # set N_STFT to the sampling rate fs to have a window size of one second.
 N_STFT = 2048
-R_STFT = N_STFT/2 # shift
 win = np.sqrt(np.hanning(N_STFT)) # window
 N_STFT_half = math.floor(N_STFT/2)+1
 omega = 2*pi*np.transpose(np.linspace(0,fs/2,N_STFT_half)) # frequency vector
@@ -121,7 +120,7 @@ with sf.SoundFile(file_path, 'r') as f:
         else:
             two_sources = False
 
-        if (iteration % 1 == 0):
+        if (iteration % 10 == 0):
             ax2.clear()
             ax2.set_xlabel('X-coordinate')
             ax2.set_ylabel('Y-coordinate')
