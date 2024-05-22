@@ -23,6 +23,6 @@ def update_visualization(ax, angle1, angle2):
 
     ax.quiver(0, 0, 0, np.cos(angle1), np.sin(angle1), 0, length=2.0,
               color='red')
-   # ax.quiver(0, 0, 0, np.cos(angle2), np.sin(angle2), 0, length=2.0,
-    #          color='blue')
+    ax.quiver(0, 0, 0, np.cos(angle2), np.sin(angle2), 0, length=2.0,
+              color='blue')
     ax.set_title(f'1. Angle: {np.rad2deg(angle1):.2f} deg, 2. Angle: {np.rad2deg(angle2):.2f} deg')

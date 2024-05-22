@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import random
 import numpy as np
 
-def visualization_of_angle_speakerPos(ax,angle,micPos, speakerPos):
+def visualization_of_angles_speakerPos(ax,angle, angle2,micPos, speakerPos):
     ax.clear()
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 8)
@@ -15,8 +15,8 @@ def visualization_of_angle_speakerPos(ax,angle,micPos, speakerPos):
     center_of_mic_array = [8, 3, 2]
     ax.scatter(center_of_mic_array[0], center_of_mic_array[1], center_of_mic_array[2], color='gray', alpha=1, s=20)
 
-    ax.quiver(center_of_mic_array[0], center_of_mic_array[1], center_of_mic_array[2], np.cos(angle), np.sin(angle), 0, length=2.0,
-              color='red')
+    ax.quiver(center_of_mic_array[0], center_of_mic_array[1], center_of_mic_array[2], np.cos(angle), np.sin(angle), 0, length=2.0,color='red')
+    ax.quiver(center_of_mic_array[0], center_of_mic_array[1], center_of_mic_array[2], np.cos(angle2), np.sin(angle2), 0,length=2.0,color='green')
     ax.set_title(f'Angle: {np.rad2deg(angle):.2f} deg')
 
     for i in range(len(speakerPos)):

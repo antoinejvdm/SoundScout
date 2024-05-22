@@ -57,6 +57,10 @@ w_0 = pi*fs
 mic_positions_df = pd.read_csv('CSV_files/mic_positions_4ch.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
+## SPEAKERS POSITION
+speaker_positions_df = pd.read_csv('CSV_files/20_speakers_position.csv')
+speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
+
 # CANDIDATE LOCATIONS
 # polar angles of candidate locations
 ang_pol= [90] # we only use the horizontal plane inside the sphere
@@ -112,7 +116,7 @@ with sf.SoundFile(file_path, 'r') as f:
         ax2.set_aspect('equal')
         ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
 
-        visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]])
+        visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]], micPos, speakerPos)
         plt.draw()
         plt.pause(0.01)
 
