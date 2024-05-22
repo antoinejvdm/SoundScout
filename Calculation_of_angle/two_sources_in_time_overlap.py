@@ -1,14 +1,5 @@
 #############################################################################################################
-# Copyright 2021 Bilgesu Çakmak
-#
-# This software is distributed under the terms of the GNU Public License
-# version 3 (http://www.gnu.org/licenses/gpl.txt).
-#
-# A Matlab version of this code is available at
-# https://github.com/tdietzen/LC-SRP.
-#
-# If you find it useful, please cite:
-#
+# Our project is based on the work and research of:
 # [1] T. Dietzen, E. De Sena, and T. van Waterschoot, "Low-Complexity
 # Steered Response Power Mapping based on Nyquist-Shannon Sampling," in
 # Proc. 2021 IEEE Workshop Appl. Signal Process. Audio, Acoust. (WASPAA 2021), New Paltz, NY, USA, Oct. 2021.
