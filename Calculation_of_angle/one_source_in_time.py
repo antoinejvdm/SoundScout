@@ -79,28 +79,36 @@ omega = 2*pi*np.transpose(np.linspace(0,fs/2,N_STFT_half)) # frequency vector
 
 start_frame = 0
 frames_per_iteration = N_STFT
+overlap = frames_per_iteration // 2
 
-# Open the audio file
+#Amount of time for computation
+amount_time_STFT = 0
+amount_time_FD_GCC = 0
+amount_time_SRP = 0
+amount_time_iter = 0
 with sf.SoundFile(file_path, 'r') as f:
     for iteration in range(f.frames // frames_per_iteration):
-        t_iter = time.time();
+        t_iter = time.time()
         start_pos = start_frame + (iteration * frames_per_iteration)
         x_TD, samplerate = sf.read(file_path, start=start_pos, frames=frames_per_iteration)
 
         # transform to STFT domain
-        x_STFT,f_x = calc_STFT_frames(x_TD, fs, win, N_STFT,'onesided')
+        t_STFT = time.time()
+        x_STFT, f_x = calc_STFT_frames(x_TD, fs, win, N_STFT, 'onesided')
+        amount_time_STFT = amount_time_STFT + (time.time() - t_STFT)
 
         # PROCESSING
+        t_FD_GCC = time.time()
         psi_STFT = calc_FD_GCC_frames(x_STFT)
+        amount_time_FD_GCC = amount_time_FD_GCC + (time.time() - t_FD_GCC)
 
-        #conventional SRP
-        t = time.time();
+        # conventional SRP
+        t_SRP = time.time()
         SRP_conv = calc_SRPconv_frames(psi_STFT, omega, Delta_t_i)
-        elapsed = time.time() - t
-        print('Time of SRPconv computation = ', elapsed)
+        amount_time_SRP = amount_time_SRP + (time.time() - t_SRP)
 
-        elapsed_iter = time.time() - t_iter
-        print('Time of iteration = ', elapsed_iter)
+        amount_time_iter = amount_time_iter + (time.time() - t_iter)
+        print('Time of iteration = ', time.time() - t_iter)
 
         data_array = np.array(SRP_conv)
         angles_degrees = np.linspace(0, 360, len(data_array))
@@ -126,4 +134,8 @@ with sf.SoundFile(file_path, 'r') as f:
             plt.draw()
             plt.pause(0.01)
 
+print('Mean time for STFT = ', (amount_time_STFT/iteration)*(fs/N_STFT))
+print('Mean time for FD_GCC = ', (amount_time_FD_GCC/iteration)*(fs/N_STFT))
+print('Mean time for SRP = ', (amount_time_SRP/iteration)*(fs/N_STFT))
+print('Mean time for iteration = ', (amount_time_iter/iteration)*(fs/N_STFT))
 plt.pause(10)

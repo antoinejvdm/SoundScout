@@ -78,6 +78,7 @@ omega = 2*pi*np.transpose(np.linspace(0,fs/2,N_STFT_half)) # frequency vector
 
 start_frame = 0
 frames_per_iteration = N_STFT
+overlap = frames_per_iteration // 2
 
 #Amount of time for computation
 amount_time_STFT = 0
@@ -87,7 +88,10 @@ amount_time_iter = 0
 with sf.SoundFile(file_path, 'r') as f:
     for iteration in range(f.frames // frames_per_iteration):
         t_iter = time.time();
-        start_pos = start_frame + (iteration * frames_per_iteration)
+        if iteration == 0:
+            start_pos = start_frame
+        else:
+            start_pos = start_frame + iteration * (frames_per_iteration - overlap)
         x_TD, samplerate = sf.read(file_path, start=start_pos, frames=frames_per_iteration)
 
         # transform to STFT domain
@@ -121,7 +125,7 @@ with sf.SoundFile(file_path, 'r') as f:
         else:
             two_sources = False
 
-        if (iteration % 10 == 0):
+        if (iteration % 20 == 0):
             ax2.clear()
             ax2.set_xlabel('X-coordinate')
             ax2.set_ylabel('Y-coordinate')

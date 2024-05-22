@@ -22,7 +22,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import soundfile as sf
 from Visualization.visualization_of_angle_speakerPos import visualization_of_angle_speakerPos
-from Visualization.visualization_of_angles_speakerPos import visualization_of_angles_speakerPos
+from Functions.calc_deltaT import calc_deltaT
 from Functions.calc_deltaTime import calc_deltaTime
 from Functions.calc_STFT_frames import calc_STFT_frames
 from Functions.calc_FD_GCC_frames import calc_FD_GCC_frames
@@ -40,7 +40,7 @@ plt.pause(0.3)
 
 
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/Two_sources_speech/output_two_sources_speech_longer.wav'
+file_path = 'Audio_simulations/Continous_sound_moving/output_moving_sound_song_4ch_40sec.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -54,20 +54,21 @@ pi=math.pi
 w_0 = pi*fs
 
 ## MICROPHONE ARRAY
-mic_positions_df = pd.read_csv('CSV_files/Two_sources_speech/microphone_coordinates.csv')
+mic_positions_df = pd.read_csv('CSV_files/Continous_sound_moving/microphone_coordinates.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
 ## SPEAKERS POSITION
-speaker_positions_df = pd.read_csv('CSV_files/Two_sources_speech/source_coordinates.csv')
+speaker_positions_df = pd.read_csv('CSV_files/Continous_sound_moving/source_coordinates.csv')
 speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
-
 
 # CANDIDATE LOCATIONS
 # polar angles of candidate locations
 ang_pol= [90] # we only use the horizontal plane inside the sphere
 ang_az = np.arange(0,359,2).tolist() # azimuth angles of candidate locations
-DOAvec_i, Delta_t_i = calc_deltaTime(micPos, ang_pol, ang_az,'polar',c) # compute candidate DOA vectors
+# compute candidate DOA vectors
+DOAvec_i, Delta_t_i = calc_deltaTime(micPos, ang_pol, ang_az,'polar',c)
 
+print(fs)
 # STFT PARAMETERS
 #N_STFT = fs # window size We set N_STFT to the sampling rate fs to have a window size of one second.
 N_STFT = 2048
@@ -78,6 +79,7 @@ omega = 2*pi*np.transpose(np.linspace(0,fs/2,N_STFT_half)) # frequency vector
 
 start_frame = 0
 frames_per_iteration = N_STFT
+overlap = frames_per_iteration // 2
 
 #Amount of time for computation
 amount_time_STFT = 0
@@ -86,13 +88,16 @@ amount_time_SRP = 0
 amount_time_iter = 0
 with sf.SoundFile(file_path, 'r') as f:
     for iteration in range(f.frames // frames_per_iteration):
-        t_iter = time.time();
-        start_pos = start_frame + (iteration * frames_per_iteration)
+        t_iter = time.time()
+        if iteration == 0:
+            start_pos = start_frame
+        else:
+            start_pos = start_frame + iteration * (frames_per_iteration - overlap)
         x_TD, samplerate = sf.read(file_path, start=start_pos, frames=frames_per_iteration)
 
         # transform to STFT domain
         t_STFT = time.time()
-        x_STFT,f_x = calc_STFT_frames(x_TD, fs, win, N_STFT,'onesided')
+        x_STFT, f_x = calc_STFT_frames(x_TD, fs, win, N_STFT, 'onesided')
         amount_time_STFT = amount_time_STFT + (time.time() - t_STFT)
 
         # PROCESSING
@@ -100,7 +105,7 @@ with sf.SoundFile(file_path, 'r') as f:
         psi_STFT = calc_FD_GCC_frames(x_STFT)
         amount_time_FD_GCC = amount_time_FD_GCC + (time.time() - t_FD_GCC)
 
-        #conventional SRP
+        # conventional SRP
         t_SRP = time.time()
         SRP_conv = calc_SRPconv_frames(psi_STFT, omega, Delta_t_i)
         amount_time_SRP = amount_time_SRP + (time.time() - t_SRP)
@@ -114,36 +119,26 @@ with sf.SoundFile(file_path, 'r') as f:
         x = data_array * np.cos(angles_radians)
         y = data_array * np.sin(angles_radians)
 
-        maxes = finde_max(data_array,10, angles_radians)
+        maxes = finde_max(data_array,10,angles_radians)
 
-        if(data_array[maxes[1]] > data_array[maxes[0]]*0.5):
-            two_sources = True
-        else:
-            two_sources = False
-
-        if (iteration % 10 == 0):
+        if(iteration % 20 == 0):
             ax2.clear()
             ax2.set_xlabel('X-coordinate')
             ax2.set_ylabel('Y-coordinate')
             ax2.set_title("iteration: " + str(iteration+1))
             ax2.grid(True)
-            ax2.plot(x, y,linestyle='-',alpha=0.5)
+            ax2.plot(x, y, linestyle='-',alpha=0.5)
             ax2.set_xlim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
             ax2.set_ylim(-data_array[maxes[0]]*1.2, data_array[maxes[0]]*1.2)
             ax2.set_aspect('equal')
             ax2.quiver(0, 0, x[maxes[0]], y[maxes[0]],scale=1, scale_units='xy',color='red')
-            if(two_sources):
-                ax2.quiver(0, 0, x[maxes[1]], y[maxes[1]], scale=1, scale_units='xy', color='green')
-            if (two_sources):
-                visualization_of_angles_speakerPos(axis_visualization, angles_radians[maxes[0]], angles_radians[maxes[1]], micPos, speakerPos)
-            else:
-                visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]],micPos, speakerPos)
+
+            visualization_of_angle_speakerPos(axis_visualization, angles_radians[maxes[0]], micPos, speakerPos)
             plt.draw()
             plt.pause(0.01)
 
-
-
-print('Mean time for STFT = ', amount_time_STFT/iteration)
-print('Mean time for FD_GCC = ', amount_time_FD_GCC/iteration)
-print('Mean time for SRP = ', amount_time_SRP/iteration)
+print('Mean time for STFT = ', (amount_time_STFT/iteration)*(fs/N_STFT))
+print('Mean time for FD_GCC = ', (amount_time_FD_GCC/iteration)*(fs/N_STFT))
+print('Mean time for SRP = ', (amount_time_SRP/iteration)*(fs/N_STFT))
+print('Mean time for iteration = ', (amount_time_iter/iteration)*(fs/N_STFT))
 plt.pause(10)
