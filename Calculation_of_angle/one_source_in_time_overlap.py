@@ -87,7 +87,7 @@ amount_time_FD_GCC = 0
 amount_time_SRP = 0
 amount_time_iter = 0
 with sf.SoundFile(file_path, 'r') as f:
-    for iteration in range(f.frames // frames_per_iteration):
+    for iteration in range(f.frames // frames_per_iteration- overlap):
         t_iter = time.time()
         if iteration == 0:
             start_pos = start_frame
