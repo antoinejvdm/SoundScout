@@ -99,8 +99,8 @@ with sf.SoundFile(file_path, 'r') as f:
         print('Time of iteration = ', time.time() - t_iter)
 
         data_array = np.array(SRP_conv)
-        angles_degrees = np.linspace(0, 360, len(data_array))
-        angles_radians = np.radians(angles_degrees)
+        #angles_degrees = np.linspace(0, 360, len(data_array))
+        angles_radians = np.radians(ang_az)
         x = data_array * np.cos(angles_radians)
         y = data_array * np.sin(angles_radians)
 
