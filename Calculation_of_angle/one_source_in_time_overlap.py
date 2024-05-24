@@ -75,8 +75,9 @@ amount_time_STFT = 0
 amount_time_FD_GCC = 0
 amount_time_SRP = 0
 amount_time_iter = 0
+iteration = 0
 with sf.SoundFile(file_path, 'r') as f:
-    for iteration in range(f.frames // frames_per_iteration- overlap):
+    for iteration in range(f.frames // (frames_per_iteration- overlap)):
         t_iter = time.time()
         if iteration == 0:
             start_pos = start_frame
@@ -126,8 +127,8 @@ with sf.SoundFile(file_path, 'r') as f:
             plt.draw()
             plt.pause(0.01)
 
-print('Mean time for STFT = ', (amount_time_STFT/iteration)*(fs/N_STFT))
-print('Mean time for FD_GCC = ', (amount_time_FD_GCC/iteration)*(fs/N_STFT))
-print('Mean time for SRP = ', (amount_time_SRP/iteration)*(fs/N_STFT))
-print('Mean time for iteration = ', (amount_time_iter/iteration)*(fs/N_STFT))
+print('Mean time for STFT = ', (amount_time_STFT/(iteration+1))*(fs/N_STFT))
+print('Mean time for FD_GCC = ', (amount_time_FD_GCC/(iteration+1))*(fs/N_STFT))
+print('Mean time for SRP = ', (amount_time_SRP/(iteration+1))*(fs/N_STFT))
+print('Mean time for iteration = ', (amount_time_iter/(iteration+1))*(fs/N_STFT))
 plt.pause(10)
