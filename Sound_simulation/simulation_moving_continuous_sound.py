@@ -10,9 +10,9 @@ corners = np.array([[0,0], [10,0], [10,6], [0,6]]).T  # [x,y]
 room_a = pra.Room.from_corners(corners)
 
 # specify signal source
-fs, signal = wavfile.read("raw_wav_files/Coldplay - Viva La Vida(40sec).wav")
+fs, signal = wavfile.read("Sound_simulation/continuous_moving_sound/Coldplay - Viva La Vida(40sec).wav")
 
-with sf.SoundFile("raw_wav_files/Coldplay - Viva La Vida(40sec).wav", 'r') as f:
+with sf.SoundFile("Sound_simulation/continuous_moving_sound/Coldplay - Viva La Vida(40sec).wav", 'r') as f:
     num_frames = len(f)
     sample_rate = f.samplerate
     # Select a chunk from the file (in seconds)
@@ -51,7 +51,7 @@ for i in range(num_sources):
     room.add_source([x_sources[i], y_sources[i], z_sources], signal=mono_signal[i*int(mono_signal.shape[0]/num_sources):(i+1)*int(mono_signal.shape[0]/num_sources)], delay=i*(duration_seconds/num_sources))
     source_coordinates[i] = (x_sources[i], y_sources[i], z_sources)
 # CSV file for saving position of speakers
-filename = "continous_moving_sound/source_coordinates.csv"
+filename = "Sound_simulation/continuous_moving_sound/source_coordinates.csv"
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["X", "Y", "Z"])
@@ -72,7 +72,7 @@ mic_coordinates = np.zeros((num_mics, 3))
 for i in range(num_mics):
     mic_coordinates[i] = (mic_positions[0][i], mic_positions[1][i], mic_positions[2][i])
 # CSV file for saving position of microphones
-filename = "continous_moving_sound/microphone_coordinates.csv"
+filename = "Sound_simulation/continuous_moving_sound/microphone_coordinates.csv"
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["X", "Y", "Z"])
