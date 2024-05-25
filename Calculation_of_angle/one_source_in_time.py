@@ -12,6 +12,7 @@ import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import soundfile as sf
+import os
 from Visualization.visualization_of_angle_speakerPos import visualization_of_angle_speakerPos
 from Functions.calc_deltaTime import calc_deltaTime
 from Functions.calc_STFT_frames import calc_STFT_frames
@@ -28,9 +29,14 @@ ax2 = f2.add_subplot(111)
 plt.show()
 plt.pause(0.3)
 
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Move up one directory
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+sub_dir = 'Sound_simulation\continous_moving_sound\output_moving_sound_song_4ch_40sec.wav'
+file_path = os.path.join(parent_dir, sub_dir)
 
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/Continous_sound_moving/output_moving_sound_song_4ch_40sec.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -98,7 +104,6 @@ with sf.SoundFile(file_path, 'r') as f:
         amount_time_SRP = amount_time_SRP + (time.time() - t_SRP)
 
         amount_time_iter = amount_time_iter + (time.time() - t_iter)
-        print('Time of iteration = ', time.time() - t_iter)
 
         data_array = np.array(SRP_conv)
         angles_radians = np.radians(ang_az)

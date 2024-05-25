@@ -12,6 +12,7 @@ import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import soundfile as sf
+import os
 from Visualization.visualization_of_angle_speakerPos import visualization_of_angle_speakerPos
 from Visualization.visualization_of_angles_speakerPos import visualization_of_angles_speakerPos
 from Functions.calc_deltaTime import calc_deltaTime
@@ -29,9 +30,14 @@ ax2 = f2.add_subplot(111)
 plt.show()
 plt.pause(0.3)
 
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Move up one directory
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+sub_dir = 'Sound_simulation/two_sources_sound/output_our_speech_audio.wav'
+file_path = os.path.join(parent_dir, sub_dir)
 
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/Two_sources_speech/output_two_sources_speech_longer.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -114,7 +120,7 @@ with sf.SoundFile(file_path, 'r') as f:
             two_sources = True
         else:
             two_sources = False
-
+        #display one image every 20 itarations
         if (iteration % 20 == 0):
             ax2.clear()
             ax2.set_xlabel('X-coordinate')

@@ -12,6 +12,7 @@ import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import soundfile as sf
+import os
 from Visualization.visualization_of_angle_speakerPos import visualization_of_angle_speakerPos
 from Visualization.visualization_of_angles_speakerPos import visualization_of_angles_speakerPos
 from Functions.calc_deltaTime import calc_deltaTime
@@ -30,8 +31,14 @@ plt.show()
 plt.pause(0.3)
 
 
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Move up one directory
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+sub_dir = 'Sound_simulation/two_sources_sound/output_our_speech_audio.wav'
+file_path = os.path.join(parent_dir, sub_dir)
+
 # Load the audio file to get its length in samples
-file_path = 'Audio_simulations/Our_speech_two_sources/output_our_speech_audio.wav'
 with sf.SoundFile(file_path, 'r') as f:
     total_samples = f.frames
 
@@ -45,11 +52,11 @@ pi=math.pi
 w_0 = pi*fs
 
 ## MICROPHONE ARRAY
-mic_positions_df = pd.read_csv('CSV_files/Our_speech_two_sources/microphone_coordinates.csv')
+mic_positions_df = pd.read_csv('CSV_files/Two_sources_speech/microphone_coordinates.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
 ## SPEAKERS POSITION
-speaker_positions_df = pd.read_csv('CSV_files/Our_speech_two_sources/source_coordinates.csv')
+speaker_positions_df = pd.read_csv('CSV_files/Two_sources_speech/source_coordinates.csv')
 speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
 
 
