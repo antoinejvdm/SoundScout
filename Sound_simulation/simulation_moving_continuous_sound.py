@@ -5,14 +5,29 @@ from IPython.display import Audio
 import pyroomacoustics as pra
 import soundfile as sf
 import csv
+import os
+
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+print('current dir: ', current_dir)
+# Move up one directory
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+print('parrent dir: ', parent_dir)
+audio_dir = 'Sound_simulation/continuous_moving_sound/Coldplay - Viva La Vida(40sec).wav' 
+audio_path = os.path.join(parent_dir, audio_dir)
+csv_source_coordinates_dir = 'Sound_simulation/continuous_moving_sound/source_coordinates.csv'
+csv_source_coordinates_path = os.path.join(parent_dir, csv_source_coordinates_dir)
+csv_mic_coordinates_dir = 'Sound_simulation/continuous_moving_sound/microphone_coordinates.csv'
+csv_mic_coordinates_path = os.path.join(parent_dir, csv_mic_coordinates_dir)
+
 
 corners = np.array([[0,0], [10,0], [10,6], [0,6]]).T  # [x,y]
 room_a = pra.Room.from_corners(corners)
 
 # specify signal source
-fs, signal = wavfile.read("Sound_simulation/continuous_moving_sound/Coldplay - Viva La Vida(40sec).wav")
+fs, signal = wavfile.read(audio_path)
 
-with sf.SoundFile("Sound_simulation/continuous_moving_sound/Coldplay - Viva La Vida(40sec).wav", 'r') as f:
+with sf.SoundFile(audio_path, 'r') as f:
     num_frames = len(f)
     sample_rate = f.samplerate
     # Select a chunk from the file (in seconds)
@@ -51,7 +66,7 @@ for i in range(num_sources):
     room.add_source([x_sources[i], y_sources[i], z_sources], signal=mono_signal[i*int(mono_signal.shape[0]/num_sources):(i+1)*int(mono_signal.shape[0]/num_sources)], delay=i*(duration_seconds/num_sources))
     source_coordinates[i] = (x_sources[i], y_sources[i], z_sources)
 # CSV file for saving position of speakers
-filename = "Sound_simulation/continuous_moving_sound/source_coordinates.csv"
+filename = csv_source_coordinates_path
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["X", "Y", "Z"])
@@ -72,7 +87,7 @@ mic_coordinates = np.zeros((num_mics, 3))
 for i in range(num_mics):
     mic_coordinates[i] = (mic_positions[0][i], mic_positions[1][i], mic_positions[2][i])
 # CSV file for saving position of microphones
-filename = "Sound_simulation/continuous_moving_sound/microphone_coordinates.csv"
+filename = csv_mic_coordinates_path
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["X", "Y", "Z"])
@@ -114,7 +129,7 @@ plt.show()
 
 for i in range(num_mics):
     audio_outputEcho = Audio(room.mic_array.signals[i, :],rate=fs)
-    with open("continous_moving_sound/audio_4mic" + str(i) + ".wav", "wb") as f:
+    with open("continuous_moving_sound/audio_4mic" + str(i) + ".wav", "wb") as f:
         f.write(audio_outputEcho.data)
 ########## Merging the 4 mic recordings #############
 import wave
@@ -148,10 +163,10 @@ def merge_wav_files(file_paths, output_path):
         out_wave.writeframes(combined_frames.tobytes())
 
 # Example usage
-file_paths = ['continous_moving_sound/audio_4mic0.wav',
-              'continous_moving_sound/audio_4mic1.wav',
-              'continous_moving_sound/audio_4mic2.wav',
-              'continous_moving_sound/audio_4mic3.wav']
+file_paths = ['continuous_moving_sound/audio_4mic0.wav',
+              'continuous_moving_sound/audio_4mic1.wav',
+              'continuous_moving_sound/audio_4mic2.wav',
+              'continuous_moving_sound/audio_4mic3.wav']
 
-output_path = 'continous_moving_sound/output_moving_sound_song_4ch_40sec.wav'
+output_path = 'continuous_moving_sound/output_moving_sound_song_4ch_40sec.wav'
 merge_wav_files(file_paths, output_path)
