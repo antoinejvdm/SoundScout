@@ -6,6 +6,22 @@ from IPython.display import Audio
 import pyroomacoustics as pra
 import soundfile as sf
 import csv
+import os 
+
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+print('current dir: ', current_dir)
+# Move up one directory
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+print('parrent dir: ', parent_dir)
+audio_Antoine_dir = 'Sound_simulation/two_sources_sound/AntoineRecording20sec.wav' 
+audio_Antoine_path = os.path.join(parent_dir, audio_Antoine_dir)
+audio_Dries_dir = 'Sound_simulation/two_sources_sound/DriesRecording.wav' 
+audio_Dries_path = os.path.join(parent_dir, audio_Dries_dir)
+csv_source_coordinates_dir = 'Sound_simulation/two_sources_sound/source_coordinates.csv'
+csv_source_coordinates_path = os.path.join(parent_dir, csv_source_coordinates_dir)
+csv_mic_coordinates_dir = 'Sound_simulation/two_sources_sound/microphone_coordinates.csv'
+csv_mic_coordinates_path = os.path.join(parent_dir, csv_mic_coordinates_dir)
 
 ##################### CHANGE THIS PARAMETER #####################
 
@@ -20,10 +36,10 @@ corners = np.array([[0,0], [10,0], [10,6], [0,6]]).T
 room_a = pra.Room.from_corners(corners)
 
 # specify signal source
-fs, signal = wavfile.read("raw_wav_files/AntoineRecording20sec.wav")
+fs, signal = wavfile.read(audio_Antoine_path)
 print(signal.shape)
 
-with sf.SoundFile("raw_wav_files/AntoineRecording20sec.wav", 'r') as f:
+with sf.SoundFile(audio_Antoine_path, 'r') as f:
     num_frames = len(f)
     sample_rate = f.samplerate
 
@@ -39,9 +55,9 @@ else:
 absorbption = 0.99
 
 # Second signal:
-fs2, signal2 = wavfile.read("raw_wav_files/DriesRecording.wav")
+fs2, signal2 = wavfile.read(audio_Dries_path)
 
-with sf.SoundFile("raw_wav_files/DriesRecording.wav", 'r') as f2:
+with sf.SoundFile(audio_Dries_path, 'r') as f2:
     num_frames2 = len(f2)
     sample_rate2 = f2.samplerate
 
@@ -73,7 +89,7 @@ else:
     room.add_source([source_coordinates[0][0],source_coordinates[0][1],source_coordinates[0][2]], signal=mono_signal, delay=0)
     room.add_source([source_coordinates[1][0],source_coordinates[1][1],source_coordinates[1][2]], signal=mono_signal2, delay=0)
 # CSV file for saving position of speakers
-filename = "our_speech_audio/source_coordinates.csv"
+filename = csv_source_coordinates_path
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["X", "Y", "Z"])
@@ -93,7 +109,7 @@ room.add_microphone(mic_positions)
 mic_coordinates = np.zeros((num_mics, 3))
 for i in range(num_mics):
     mic_coordinates[i] = (mic_positions[0][i], mic_positions[1][i], mic_positions[2][i])
-filename = "our_speech_audio/microphone_coordinates.csv"
+filename = csv_mic_coordinates_path
 with open(filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(["X", "Y", "Z"])
@@ -106,7 +122,7 @@ room.image_source_model()
 room.simulate()
 for i in range(4):
     audio_outputEcho = Audio(room.mic_array.signals[i, :],rate=fs)
-    with open("our_speech_audio/audio_output" + str(i) + ".wav", "wb") as f:
+    with open(current_dir + "/two_sources_sound/audio_output" + str(i) + ".wav", "wb") as f:
         f.write(audio_outputEcho.data)
 
 # visualize 3D polyhedron room and image sources
@@ -152,10 +168,10 @@ def merge_wav_files(file_paths, output_path):
         out_wave.writeframes(combined_frames.tobytes())
 
 # Example usage
-file_paths = ['our_speech_audio/audio_output0.wav',
-              'our_speech_audio/audio_output1.wav',
-              'our_speech_audio/audio_output2.wav',
-              'our_speech_audio/audio_output3.wav']
+file_paths = ['two_sources_sound/audio_output0.wav',
+              'two_sources_sound/audio_output1.wav',
+              'two_sources_sound/audio_output2.wav',
+              'two_sources_sound/audio_output3.wav']
 
-output_path = 'our_speech_audio/output_our_speech_audio.wav'
+output_path = 'two_sources_sound/output_our_speech_audio.wav'
 merge_wav_files(file_paths, output_path)
