@@ -101,7 +101,6 @@ with sf.SoundFile(file_path, 'r') as f:
         amount_time_SRP = amount_time_SRP + (time.time() - t_SRP)
 
         amount_time_iter = amount_time_iter + (time.time() - t_iter)
-        print('Time of iteration = ', time.time() - t_iter)
 
         data_array = np.array(SRP_conv)
         angles_degrees = np.linspace(0, 360, len(data_array))
