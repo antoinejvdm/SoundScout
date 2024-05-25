@@ -37,6 +37,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sub_dir = 'Sound_simulation/two_sources_sound/output_our_speech_audio.wav'
 file_path = os.path.join(parent_dir, sub_dir)
+svs_dir = 'Sound_simulation/continous_moving_sound'
+cvs_path = os.path.join(parent_dir, svs_dir)
 
 # Load the audio file to get its length in samples
 with sf.SoundFile(file_path, 'r') as f:
@@ -52,11 +54,11 @@ pi=math.pi
 w_0 = pi*fs
 
 ## MICROPHONE ARRAY
-mic_positions_df = pd.read_csv('CSV_files/Two_sources_speech/microphone_coordinates.csv')
+mic_positions_df = pd.read_csv(cvs_path + '/microphone_coordinates.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
 ## SPEAKERS POSITION
-speaker_positions_df = pd.read_csv('CSV_files/Two_sources_speech/source_coordinates.csv')
+speaker_positions_df = pd.read_csv(cvs_path + '/source_coordinates.csv')
 speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
 
 
@@ -103,7 +105,6 @@ with sf.SoundFile(file_path, 'r') as f:
         amount_time_SRP = amount_time_SRP + (time.time() - t_SRP)
 
         amount_time_iter = amount_time_iter + (time.time() - t_iter)
-        print('Time of iteration = ', time.time() - t_iter)
 
         data_array = np.array(SRP_conv)
         #angles_degrees = np.linspace(0, 360, len(data_array))
