@@ -36,7 +36,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sub_dir = 'Sound_simulation/two_sources_sound/output_our_speech_audio.wav'
 file_path = os.path.join(parent_dir, sub_dir)
-svs_dir = 'Sound_simulation/continous_moving_sound'
+svs_dir = 'Sound_simulation/continuous_moving_sound'
 cvs_path = os.path.join(parent_dir, svs_dir)
 
 # Load the audio file to get its length in samples

@@ -33,10 +33,10 @@ plt.pause(0.3)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Move up one directory
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-sub_dir = 'Sound_simulation\continous_moving_sound\output_moving_sound_song_4ch_40sec.wav'
+sub_dir = 'Sound_simulation\continuous_moving_sound\output_moving_sound_song_4ch_40sec.wav'
 file_path = os.path.join(parent_dir, sub_dir)
-svs_dir = 'Sound_simulation/continous_moving_sound'
-cvs_path = os.path.join(parent_dir, svs_dir)
+csv_dir = 'Sound_simulation/continuous_moving_sound'
+csv_path = os.path.join(parent_dir, csv_dir)
 
 # Load the audio file to get its length in samples
 with sf.SoundFile(file_path, 'r') as f:
@@ -52,11 +52,11 @@ pi=math.pi
 w_0 = pi*fs
 
 ## MICROPHONE ARRAY
-mic_positions_df = pd.read_csv(cvs_path + '/microphone_coordinates.csv')
+mic_positions_df = pd.read_csv(csv_path + '/microphone_coordinates.csv')
 micPos = mic_positions_df[['X','Y','Z']].to_numpy()
 
 ## SPEAKERS POSITION
-speaker_positions_df = pd.read_csv(cvs_path + '/source_coordinates.csv')
+speaker_positions_df = pd.read_csv(csv_path + '/source_coordinates.csv')
 speakerPos = speaker_positions_df[['X','Y','Z']].to_numpy()
 
 # CANDIDATE LOCATIONS
