@@ -9,10 +9,8 @@ import os
 
 # Get the directory of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
-print('current dir: ', current_dir)
 # Move up one directory
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
-print('parrent dir: ', parent_dir)
 audio_dir = 'Sound_simulation/continuous_moving_sound/Coldplay - Viva La Vida(40sec).wav' 
 audio_path = os.path.join(parent_dir, audio_dir)
 csv_source_coordinates_dir = 'Sound_simulation/continuous_moving_sound/source_coordinates.csv'
