@@ -3,10 +3,14 @@
 This project aims to build a simple sound localisation system using Python. The goal is to visually represent the direction of arrival (DOA) of real-time sound.
 
 ## Table of Content
-- **Audio_simulations:** Contains all the .wav files used in the project
-- **CSV_files:** Contains all the files containing the coordinates of the virtual microphone and sound source setup in CSV format
+
 - **Functions:** Contains all the algorithms (STFT, FD GCC, SRP, ...) used to calculate the direction of arrival (DOA). It is an edited version of the work and research cited below.
 - **Visualization:** Contains all the code for plotting our simulations and other data.
+  - 'one_source_in_time.py' and 'one_source_in_time_overlap.py' show an example of sound moving around the microphone's array. An arrow points to the sound source's location in real-time (= when the .wav file is playing). The files showcase an non-overlapping and overlapping window for the STFT respectively.
+  - 'two_sources_in_time.py' and 'two_sources_in_time_overlap.py' show the localization of sound produced by 2 speakers in a room. Non-overlapping and overlapping window for the STFT respectively.
+- **Sound_simulation:** Contains the code for simulating the room environment. 
+  - 'simulation_moving_continuous_sound.py' plots the room setup of the example where sound is moving around the microphone array.
+  - 'simulation_two_sources.py' plots the room setup of the example where 2 speakers at different angles are localized.
 - **Videos_for_presentation:** Contains the videos that were used in the final presentation of our XR project.
 
 ## Standing on the Shoulders of Giants
